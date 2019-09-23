@@ -4,14 +4,17 @@
   "description": "",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --config webpack.dev.js",    
+    "start:dev": "webpack-dev-server --config webpack.dev.js",
+    "start": "server/server.js",
     "build": "webpack --config webpack.prod.js",
+    "heroku-postbuild": "npm run build",
     "test": "jest --config=jest.config.json --watch --runInBand"
   },
   "keywords": [],
   "author": "Korum",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.1",
     "moment": "^2.24.0",
     "normalize.css": "^8.0.1",
     "react": "^16.9.0",
