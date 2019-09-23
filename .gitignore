@@ -1,6 +1,3 @@
 node_modules/
 src/playground/
-public/bundle.js.LICENSE
-public/bundle.js.map
-public/bundle.js
-public/main.css
+public/dist/
