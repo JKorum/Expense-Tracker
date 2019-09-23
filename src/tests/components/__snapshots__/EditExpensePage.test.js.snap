@@ -9,7 +9,7 @@ exports[`should render EditExpensePage correctly 1`] = `
     buttonName="edit expense"
     expense={
       Object {
-        "amount": "100",
+        "amount": 100,
         "createdAt": 0,
         "description": "hair tax",
         "id": "1",
