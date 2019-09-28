@@ -14,6 +14,8 @@ import 'normalize.css/normalize.css'
 import 'react-dates/lib/css/_datepicker.css'
 import './styles/style.scss'
 
+// import './firebase/firestore'
+
 const store = configureStore()
 
 const jsx = (
