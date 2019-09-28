@@ -4,13 +4,13 @@ import database from '../firebase/firestore'
 // ACTION GENERATORS 
 // action gen --> action object --> arg for store.dispatch
 
+//ADD EXPENSE
 const addExpense = (expense) => ({
 	type: `ADD_EXPENSE`,
 	expense
 })
 
-//functionality provided by `redux-thunk`
-const startAddExpense = (expenseData = {}) => {
+const startAddExpense = (expenseData = {}) => { //functionality is possible because `redux-thunk`
 
 	return async (dispatch) => {
 		const {
@@ -35,12 +35,26 @@ const startAddExpense = (expenseData = {}) => {
 
 }
 
-
-
+//DELETE EXPENSE
 const deleteExpense = (expenseId) => ({
 	type: `DELETE_EXPENSE`,
 	expenseId
 })
+
+const startDeleteExpense = (id) => {
+	return async (dispatch) => {
+		await database.collection('expenses').doc(id).delete()
+		dispatch(deleteExpense(id))
+	}
+}
+
+
+
+
+
+
+
+
 
 const editExpense = (id, updates) => ({
 	type: `EDIT_EXPENSE`, 
@@ -78,15 +92,12 @@ const startSetExpenses = () => {
 	}
 }
 
-
-
-
-
 export { 
 	addExpense, 
 	startAddExpense,
 	deleteExpense, 
 	editExpense, 
 	setExpenses, 
-	startSetExpenses 
+	startSetExpenses,
+	startDeleteExpense
 }

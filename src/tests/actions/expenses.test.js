@@ -7,7 +7,8 @@ import {
 	deleteExpense, 
 	editExpense, 
 	setExpenses,
-	startSetExpenses 
+	startSetExpenses,
+	startDeleteExpense 
 } from '../../actions/expenses'
 import expenses from '../fixtures/expenses'
 
@@ -22,7 +23,6 @@ beforeEach(async () => {
 	})
 
 })
-
 
 test(`should add expense to database and store with provided value`, async () => {
 	const store = createMockStore({})
@@ -46,7 +46,6 @@ test(`should add expense to database and store with provided value`, async () =>
 	expect(expenseFromFirestore).toEqual(expense)
 })
 
-
 test(`should add expense to database and store with default value`, async () => {
 	const defaults = {
 		description: '', 
@@ -69,7 +68,6 @@ test(`should add expense to database and store with default value`, async () => 
 	expect(expenseFromFirestore).toEqual(defaults)
 })
 
-
 test(`should setup delete expense action object`, () => {
 	const delActObj = deleteExpense(`12345`)
 	expect(delActObj).toEqual({
@@ -77,7 +75,6 @@ test(`should setup delete expense action object`, () => {
 		expenseId: `12345`
 	})
 })
-
 
 test(`should setup update expense action object`, () => {
 	const updateActObj = editExpense(`12345`, { description: `rent`, amount: `1200` })
@@ -87,7 +84,6 @@ test(`should setup update expense action object`, () => {
 		updates: { description: `rent`, amount: `1200` }
 	})
 })
-
 
 test(`should setup set expenses action object with data`, () => {	
 	const action = setExpenses(expenses)
@@ -129,5 +125,24 @@ test(`should correctly set store if database has no expenses`, async () => {
 	expect(actionFromFakeStore).toEqual({
 		type: 'SET_EXPENSES',
 		expenses: []
+	})
+})
+
+test(`should delete expense`, async () => {
+	const store = createMockStore({})
+
+	const querySnapshot = await firestore.collection('expenses').get()
+	const id = querySnapshot.docs[0].id
+
+	await store.dispatch(startDeleteExpense(id))
+
+	const docSnapshot = await firestore.collection('expenses').doc(id).get()
+	expect(docSnapshot.exists).toEqual(false)
+
+	const action = await store.getActions()[0]
+
+	expect(action).toEqual({
+		type: 'DELETE_EXPENSE',
+		expenseId: id
 	})
 })

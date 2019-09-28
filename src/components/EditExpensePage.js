@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import ExpenseForm from './ExpenseForm'
-import { editExpense, deleteExpense } from '../actions/expenses'
+import { editExpense, startDeleteExpense } from '../actions/expenses'
 
 export class EditExpensePage extends React.Component {
 	constructor(props) {
@@ -17,7 +17,7 @@ export class EditExpensePage extends React.Component {
 	}
 
 	handleRemoveExpense(e){		
-		this.props.deleteExpense(this.props.expense.id)
+		this.props.startDeleteExpense(this.props.expense.id)
 		this.props.history.push(`/`)
 	}
 
@@ -46,7 +46,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => ({
 	editExpense: (id, expense) => dispatch(editExpense(id, expense)),
-	deleteExpense: id => dispatch(deleteExpense(id))
+	startDeleteExpense: id => dispatch(startDeleteExpense(id))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditExpensePage)
