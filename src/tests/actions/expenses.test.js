@@ -8,7 +8,8 @@ import {
 	editExpense, 
 	setExpenses,
 	startSetExpenses,
-	startDeleteExpense 
+	startDeleteExpense,
+	startEditExpense 
 } from '../../actions/expenses'
 import expenses from '../fixtures/expenses'
 
@@ -144,5 +145,27 @@ test(`should delete expense`, async () => {
 	expect(action).toEqual({
 		type: 'DELETE_EXPENSE',
 		expenseId: id
+	})
+})
+
+test(`should update expense`, async () => {	
+	const store = createMockStore({})
+
+	const querySnapshot = await firestore.collection('expenses').where('description', '==', 'rent').get()
+	const id = querySnapshot.docs[0].id
+	const docBeforeUpdate = querySnapshot.docs[0].data()
+
+	const updates = { description: 'rent UPDATED' }
+
+	await store.dispatch(startEditExpense(id, updates))
+
+	const querySnapshotUpdated = await firestore.collection('expenses').doc(id).get()
+
+	expect(querySnapshotUpdated.data()).toEqual({ ...docBeforeUpdate, ...updates })
+
+	expect(store.getActions()[0]).toEqual({
+		type: 'EDIT_EXPENSE',
+		id,
+		updates
 	})
 })

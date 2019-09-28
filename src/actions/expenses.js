@@ -11,7 +11,6 @@ const addExpense = (expense) => ({
 })
 
 const startAddExpense = (expenseData = {}) => { //functionality is possible because `redux-thunk`
-
 	return async (dispatch) => {
 		const {
 			description = ``, 
@@ -32,7 +31,6 @@ const startAddExpense = (expenseData = {}) => { //functionality is possible beca
 		}))
 
 	}
-
 }
 
 //DELETE EXPENSE
@@ -48,22 +46,19 @@ const startDeleteExpense = (id) => {
 	}
 }
 
-
-
-
-
-
-
-
-
+//EDIT EXPENSE
 const editExpense = (id, updates) => ({
 	type: `EDIT_EXPENSE`, 
 	id,
 	updates
 })
 
-
-
+const startEditExpense = (id, updates) => {
+	return async (dispatch) => {
+		await database.collection('expenses').doc(id).update(updates)
+		dispatch(editExpense(id, updates))
+	}
+}
 
 //SET_EXPENSES
 const setExpenses = (expenses) => ({
@@ -99,5 +94,6 @@ export {
 	editExpense, 
 	setExpenses, 
 	startSetExpenses,
-	startDeleteExpense
+	startDeleteExpense,
+	startEditExpense
 }
