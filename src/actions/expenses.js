@@ -10,7 +10,7 @@ const addExpense = (expense) => ({
 })
 
 //functionality provided by `redux-thunk`
-export const startAddExpense = (expenseData = {}) => {
+const startAddExpense = (expenseData = {}) => {
 
 	return async (dispatch) => {
 		const {
@@ -48,4 +48,45 @@ const editExpense = (id, updates) => ({
 	updates
 })
 
-export { addExpense, deleteExpense, editExpense }
+
+
+
+//SET_EXPENSES
+const setExpenses = (expenses) => ({
+	type: 'SET_EXPENSES',
+	expenses
+}) 
+
+const startSetExpenses = () => {
+	return async (dispatch) => {
+		const expenses = []
+
+		const querySnapshot = await database.collection('expenses').get()
+		
+		if (querySnapshot.empty === false) {
+			querySnapshot.forEach(queryDocSnap => {
+				expenses.push({
+					id: queryDocSnap.id,
+					...queryDocSnap.data()
+				})
+			})
+			dispatch(setExpenses(expenses))
+		} else {
+				dispatch(setExpenses(expenses))
+		}
+
+	}
+}
+
+
+
+
+
+export { 
+	addExpense, 
+	startAddExpense,
+	deleteExpense, 
+	editExpense, 
+	setExpenses, 
+	startSetExpenses 
+}

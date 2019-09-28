@@ -65,3 +65,23 @@ test(`should not edit not existing expense`, () => {
 	const state = expensesReduser(expenses, action)
 	expect(state).toEqual(expenses)
 })
+
+test(`should set expenses`, () => {
+	let action = {
+		type: `ADD_EXPENSE`,
+		expense: {
+			id: `4`,
+			description: `new expense`,
+			note: ``,
+			amount: `700`,
+			createdAt: moment().valueOf()
+		}
+	}
+	const defaultState = expensesReduser([], action)
+	action = {
+		type: `SET_EXPENSES`,
+		expenses
+	}
+	const state = expensesReduser(defaultState, action)
+	expect(state).toEqual([...expenses])
+})

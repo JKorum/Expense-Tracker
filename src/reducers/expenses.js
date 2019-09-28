@@ -5,6 +5,8 @@ const expensesReducerDefaultState = []
 
 const expensesReduser = (state = expensesReducerDefaultState, action) => {
 	switch (action.type) {
+		case `SET_EXPENSES`: 
+			return [...action.expenses]
 		case `ADD_EXPENSE`: 
 			return [...state, action.expense]
 		case `DELETE_EXPENSE`:
