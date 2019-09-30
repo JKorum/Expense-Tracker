@@ -11,7 +11,7 @@ const addExpense = (expense) => ({
 })
 
 const startAddExpense = (expenseData = {}) => { //functionality is possible because `redux-thunk`
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
 		const {
 			description = ``, 
 			note = ``, 
@@ -19,9 +19,11 @@ const startAddExpense = (expenseData = {}) => { //functionality is possible beca
 			createdAt = 0
 		} = expenseData
 
+		const uid = getState().auth.uid
+
 		const newExpense = { description, note, amount, createdAt }
 
-		const expenseReference = await database.collection('expenses').add(newExpense)
+		const expenseReference = await database.collection(`users/${uid}/expenses`).add(newExpense)
 		const expenseSnapshot = await expenseReference.get()
 		const expenseForRedux = expenseSnapshot.data()
 
@@ -40,8 +42,9 @@ const deleteExpense = (expenseId) => ({
 })
 
 const startDeleteExpense = (id) => {
-	return async (dispatch) => {
-		await database.collection('expenses').doc(id).delete()
+	return async (dispatch, getState) => {
+		const uid = getState().auth.uid
+		await database.collection(`users/${uid}/expenses`).doc(id).delete()
 		dispatch(deleteExpense(id))
 	}
 }
@@ -54,8 +57,9 @@ const editExpense = (id, updates) => ({
 })
 
 const startEditExpense = (id, updates) => {
-	return async (dispatch) => {
-		await database.collection('expenses').doc(id).update(updates)
+	return async (dispatch, getState) => {
+		const uid = getState().auth.uid
+		await database.collection(`users/${uid}/expenses`).doc(id).update(updates)
 		dispatch(editExpense(id, updates))
 	}
 }
@@ -67,10 +71,11 @@ const setExpenses = (expenses) => ({
 }) 
 
 const startSetExpenses = () => {
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
 		const expenses = []
+		const uid = getState().auth.uid
 
-		const querySnapshot = await database.collection('expenses').get()
+		const querySnapshot = await database.collection(`users/${uid}/expenses`).get()
 		
 		if (querySnapshot.empty === false) {
 			querySnapshot.forEach(queryDocSnap => {

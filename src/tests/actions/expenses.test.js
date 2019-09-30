@@ -13,20 +13,21 @@ import {
 } from '../../actions/expenses'
 import expenses from '../fixtures/expenses'
 
+const uid = 'lilu123'
 const createMockStore = configureMockStore([thunk])
 
 beforeEach(async () => {
-	const querySnapshot = await firestore.collection('expenses').get()
+	const querySnapshot = await firestore.collection(`users/${uid}/expenses`).get()
 	querySnapshot.forEach(async (queryDocSnap) => await queryDocSnap.ref.delete())
 
 	expenses.forEach(async ({ description, amount, note, createdAt }) => {
-		await firestore.collection('expenses').add({ description, amount, note, createdAt })
+		await firestore.collection(`users/${uid}/expenses`).add({ description, amount, note, createdAt })
 	})
 
 })
 
 test(`should add expense to database and store with provided value`, async () => {
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 	const expense = {
 		description: 'Mouse',
 		amount: 12,
@@ -42,7 +43,7 @@ test(`should add expense to database and store with provided value`, async () =>
 			...expense
 		}		
 	})
-	const expenseSnapshot = await firestore.collection('expenses').doc(actionFromStore.expense.id).get()
+	const expenseSnapshot = await firestore.collection(`users/${uid}/expenses`).doc(actionFromStore.expense.id).get()
 	const expenseFromFirestore = expenseSnapshot.data()
 	expect(expenseFromFirestore).toEqual(expense)
 })
@@ -54,7 +55,7 @@ test(`should add expense to database and store with default value`, async () => 
 		amount: 0, 
 		createdAt: 0
 	}
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 	await store.dispatch(startAddExpense())
 	const actionFromStore = store.getActions()[0]
 	expect(actionFromStore).toEqual({
@@ -64,7 +65,7 @@ test(`should add expense to database and store with default value`, async () => 
 			...defaults
 		}		
 	})	
-	const expenseSnapshot = await firestore.collection('expenses').doc(actionFromStore.expense.id).get()
+	const expenseSnapshot = await firestore.collection(`users/${uid}/expenses`).doc(actionFromStore.expense.id).get()
 	const expenseFromFirestore = expenseSnapshot.data()
 	expect(expenseFromFirestore).toEqual(defaults)
 })
@@ -95,13 +96,13 @@ test(`should setup set expenses action object with data`, () => {
 })
 
 test(`should correctly set store if database has expenses`, async () => {
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 	await store.dispatch(startSetExpenses())
 	const actionFromFakeStore = store.getActions()[0]
 		
 	const setToCompare = []	
 
-	const querySnapshot = await firestore.collection('expenses').get()
+	const querySnapshot = await firestore.collection(`users/${uid}/expenses`).get()
 	querySnapshot.forEach(queryDocSnap => {
 		setToCompare.push({
 			id: queryDocSnap.id,
@@ -116,10 +117,10 @@ test(`should correctly set store if database has expenses`, async () => {
 })
 
 test(`should correctly set store if database has no expenses`, async () => {
-	const querySnapshot = await firestore.collection('expenses').get()
+	const querySnapshot = await firestore.collection(`users/${uid}/expenses`).get()
 	querySnapshot.forEach(async (queryDocSnap) => await queryDocSnap.ref.delete())
 
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 	await store.dispatch(startSetExpenses())
 	const actionFromFakeStore = store.getActions()[0]
 
@@ -130,14 +131,14 @@ test(`should correctly set store if database has no expenses`, async () => {
 })
 
 test(`should delete expense`, async () => {
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 
-	const querySnapshot = await firestore.collection('expenses').get()
+	const querySnapshot = await firestore.collection(`users/${uid}/expenses`).get()
 	const id = querySnapshot.docs[0].id
 
 	await store.dispatch(startDeleteExpense(id))
 
-	const docSnapshot = await firestore.collection('expenses').doc(id).get()
+	const docSnapshot = await firestore.collection(`users/${uid}/expenses`).doc(id).get()
 	expect(docSnapshot.exists).toEqual(false)
 
 	const action = await store.getActions()[0]
@@ -149,9 +150,9 @@ test(`should delete expense`, async () => {
 })
 
 test(`should update expense`, async () => {	
-	const store = createMockStore({})
+	const store = createMockStore({ auth: { uid } })
 
-	const querySnapshot = await firestore.collection('expenses').where('description', '==', 'rent').get()
+	const querySnapshot = await firestore.collection(`users/${uid}/expenses`).where('description', '==', 'rent').get()
 	const id = querySnapshot.docs[0].id
 	const docBeforeUpdate = querySnapshot.docs[0].data()
 
@@ -159,7 +160,7 @@ test(`should update expense`, async () => {
 
 	await store.dispatch(startEditExpense(id, updates))
 
-	const querySnapshotUpdated = await firestore.collection('expenses').doc(id).get()
+	const querySnapshotUpdated = await firestore.collection(`users/${uid}/expenses`).doc(id).get()
 
 	expect(querySnapshotUpdated.data()).toEqual({ ...docBeforeUpdate, ...updates })
 
