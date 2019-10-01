@@ -69,47 +69,51 @@ class ExpenseForm extends React.Component {
 	}
 
 	render() {		
-		return (
-			<div>
-				{this.state.error && <p>{this.state.error}</p>}
-				<form onSubmit={this.handleSubmit}>
-					<input 
-						type="text" 
-						placeholder="description" 
-						autoFocus 
-						value={this.state.description}
-						onChange={this.handleDescriptionChange}
-					/>
+		return (				
+			<form className="form" onSubmit={this.handleSubmit}>
+				{this.state.error && <p className="form__error">{this.state.error}</p>}
+				<input 
+					type="text" 
+					className="text-input"
+					placeholder="description" 
+					autoFocus 
+					value={this.state.description}
+					onChange={this.handleDescriptionChange}
+				/>
 
-					<input 
-						type="text" 
-						value={this.state.amount}
-						onChange={this.handleAmountChange}
-						placeholder="amount" 
-					/>
+				<input 
+					type="text" 
+					className="text-input"
+					value={this.state.amount}
+					onChange={this.handleAmountChange}
+					placeholder="amount" 
+				/>
 
-					<SingleDatePicker
-					  date={this.state.createdAt} 
-					  onDateChange={this.handleDateChange}
-					  focused={this.state.calendarFocused}
-					  onFocusChange={this.handleFocusChange}
-					  id={uuid()}
-					  numberOfMonths={1}		
-					  isOutsideRange={() => false} // make days in a past clickable			  
-					/>
+				<SingleDatePicker
+				  date={this.state.createdAt} 
+				  onDateChange={this.handleDateChange}
+				  focused={this.state.calendarFocused}
+				  onFocusChange={this.handleFocusChange}
+				  id={uuid()}
+				  numberOfMonths={1}		
+				  isOutsideRange={() => false} // make days in a past clickable			  
+				/>
 
-					<textarea 
-						value={this.state.note}
-						onChange={this.handleNoteChange}
-						placeholder="add a note for your expense"
-					>
-					</textarea>
+				<textarea 
+					className="textarea"
+					value={this.state.note}
+					onChange={this.handleNoteChange}
+					placeholder="add a note for your expense"
+				>
+				</textarea>
+				<div>
 					<button 
 						type="submit"
+						className="button"
 						disabled={this.props.buttonName === `edit expense` && this.props.expense === undefined}
 					>{this.state.button}</button>
-				</form>
-			</div>
+				</div>				
+			</form>			
 		)
 	}
 }

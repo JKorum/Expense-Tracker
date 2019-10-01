@@ -1,0 +1,13 @@
+/* to hide element on larger screens */
+.show-for-mobile {
+	@media (min-width: $desktop-breakpoint) {
+		display: none;
+	}
+}
+
+/* to hide element on smaller screens */
+.show-for-desktop {
+	@media (max-width: $desktop-breakpoint - .01rem) {
+		display: none;
+	}
+}
